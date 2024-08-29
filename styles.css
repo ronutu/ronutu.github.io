@@ -9,6 +9,11 @@ body {
     color: rgb(236, 223, 204);
 }
 
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
 .wrapper {
     margin: 20px auto;
     width: 80%;
@@ -55,3 +60,4 @@ body {
         align-items: center;
     }
 }
+
