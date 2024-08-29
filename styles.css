@@ -17,11 +17,13 @@ body {
     background-color: rgb(57, 62, 70);
     display: flex;
     align-items: center;
+    padding-left: 20px;
 }
 
 .wrapper img {
     max-width: 50px;
     border-radius: 10px;
+    margin-left: 20px;
 }
 
 .text-box {
