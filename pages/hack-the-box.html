@@ -7,6 +7,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/stackoverflow-dark.min.css">
+    
 </head>
 <body>
     <a href="../index.html" class="no-decoration"><h1>CTF Writeups</h1></a>
@@ -41,6 +43,25 @@
        you found one of the confidential messages for the customer. It contains crucial information about the delivery. Do you
        think you can decrypt it?</p>
 
+    <div class="code-block">
+        <pre><code class="language-python">
+import string
+from secret import MSG
 
+def encryption(msg):
+    ct = []
+    for char in msg:
+        ct.append((123 * char + 18) % 256)
+    return bytes(ct)
+
+ct = encryption(MSG)
+f = open('./msg.enc','w')
+f.write(ct.hex())
+f.close()
+        </code></pre>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
 </body>
 </html>
