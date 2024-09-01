@@ -4,9 +4,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CTF Writeups</title>
     <link rel="stylesheet" href="../css/styles.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/stackoverflow-dark.min.css">
     
 </head>
@@ -39,12 +36,15 @@
     <h2 id="baby-encryption">BabyEncryption</h2>
     <h3>Description</h3>
     <p>You are after an organised crime group which is responsible for the illegal weapon market in your country. As a
-       secret agent, you have infiltrated the group enough to be included in meetings with clients. During the last negotiation,
-       you found one of the confidential messages for the customer. It contains crucial information about the delivery. Do you
-       think you can decrypt it?</p>
+       secret agent, you have infiltrated the group enough to be included in meetings with clients. During the last 
+       negotiation, you found one of the confidential messages for the customer. It contains crucial information about
+       the delivery. Do you think you can decrypt it?</p>
 
-    <div class="code-block">
-        <pre><code class="language-python">
+    <h3>Task files:</h3>
+    <p>1. chall.py</p>
+
+    <pre>
+        <code class="language-python">
 import string
 from secret import MSG
 
@@ -58,8 +58,68 @@ ct = encryption(MSG)
 f = open('./msg.enc','w')
 f.write(ct.hex())
 f.close()
-        </code></pre>
-    </div>
+        </code>
+    </pre>
+
+    <p>2. msg.enc</p>
+
+    <pre>
+        <code class="language-console">
+6e0a9372ec49a3f6930ed8723f9df6f6720ed8d89dc4937222ec7214d89d1e0e352ce0aa6ec82bf622227bb70e7fb7352249b7d893c493d8539dec8fb7935d490e7f9d22ec89b7a322ec8fd80e7f8921 
+        </code>
+    </pre>
+    
+    <h3>Solution</h3>
+    <p>We receive 2 files: an encryption script ('chall.py') and an encrypted key ('msg.enc'). When attempting to run
+       the Python script, we encounter the following error:</p>
+
+    <pre>
+        <code class="language-console">
+Traceback (most recent call last):
+    File "chall.py", line 2, in &lt;module&gt;
+        from secret import MSG
+ImportError: cannot import name 'MSG' from 'secret'
+        </code>
+    </pre>
+
+    <p>We don't need to run the script because it's enough to understand how the message was encrypted and then 
+       everse engineer it. The script processes each character of the message and applies some arithmetic operations to it.
+       Since you can't directly add a character to a number, we can assume that each character was first converted into 
+       its ASCII equivalent, which was then copied into a new list. After that, the list was converted into bytes and then 
+       to hex format. With this understanding of how the message was encrypted, we can now write another Python script 
+       to decrypt it.</p>
+
+       <pre>
+        <code class="language-python">
+f = open("msg.enc", "r")
+msg = f.read()
+byte_msg = bytes.fromhex(msg)
+decrypted_msg = ""
+for char in byte_msg:
+        for i in range(256):
+                if char == ((123*i + 18) % 256):
+                        decrypted_msg += chr(i)
+                        break
+
+print(decrypted_msg)
+        </code>
+    </pre>
+
+    <p>First, we convert the message from hex back to binary format. Then, we iterate through each byte, converting it
+       to an integer value. For each integer, we iterate through possible ASCII values, applying the encryption's 
+       arithmetic operations to determine if we can reverse them to find the original ASCII value. Once we identify the
+       correct value, we append the corresponding character to a string. Finally, we print the resulting string. The output
+       will be as follows:</p>
+
+    <pre>
+        <code class="language-python">
+Th3 nucl34r w1ll 4rr1v3 0n fr1d4y.
+HTB{l00k_47_y0u_r3v3rs1ng_3qu4710n5_c0ngr475}            
+        </code>
+    </pre>
+
+    <h3>Flag</h3>
+    <p class="flag-decoration">HTB{l00k_47_y0u_r3v3rs1ng_3qu4710n5_c0ngr475}</p>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script>hljs.highlightAll();</script>
