@@ -11,31 +11,29 @@
     <a href="../index.html" class="no-decoration title"><h1>CTF Writeups</h1></a>
 
     <h2>Overview</h2>
-    
-    <table class="table-details">
+    <table class="table-details" id="table">
         <tr>
             <th class="left-border">Challenge</th>
             <th>Difficulty</th>
             <th>Category</th>
             <th class="right-border">Flag</th>
         </tr>
-
         <tr>
             <td class="left-border"><a href="#baby-encryption" class="challenge-decoration">BabyEncryption</a></td>
             <td>Very easy</td>
             <td>crypto</td>
             <td class="right-border flag-decoration">HTB{l00k_47_y0u_r3v3rs1ng_3qu4710n5_c0ngr475}</td>
         </tr>
-
         <tr>
             <td class="left-border bottom-border"><a href="#behind-the-scenes" class="challenge-decoration">Behind the Scenes</a></td>
             <td class="bottom-border">Very easy</td>
             <td class="bottom-border">reversing</td>
-            <td class="right-border bottom-border flag-decoration">HTB{l00k_47_y0u_r3v3rs1ng_3qu4710n5_c0ngr475}</td>
+            <td class="right-border bottom-border flag-decoration">HTB{Itz_0nLy_UD2}</td>
         </tr>
     </table>
 
-    <h2 id="baby-encryption">1. BabyEncryption</h2>
+
+    <h2 id="baby-encryption"><a href="#table" class="no-decoration">1. BabyEncryption</a></h2>
     <h3>Description</h3>
     <p>You are after an organised crime group which is responsible for the illegal weapon market in your country. As a
        secret agent, you have infiltrated the group enough to be included in meetings with clients. During the last 
@@ -44,7 +42,6 @@
 
     <h3>Task files:</h3>
     <p>1. chall.py</p>
-
     <pre>
         <code class="language-python">
 import string
@@ -62,9 +59,7 @@ f.write(ct.hex())
 f.close()
         </code>
     </pre>
-
     <p>2. msg.enc</p>
-
     <pre>
         <code class="language-console">
 6e0a9372ec49a3f6930ed8723f9df6f6720ed8d89dc4937222ec7214d89d1e0e352ce0aa6ec82bf622227bb70e7fb7352249b7d893c493d8539dec8fb7935d490e7f9d22ec89b7a322ec8fd80e7f8921 
@@ -74,7 +69,6 @@ f.close()
     <h3>Solution</h3>
     <p>We receive 2 files: an encryption script ('chall.py') and an encrypted key ('msg.enc'). When attempting to run
        the Python script, we encounter the following error:</p>
-
     <pre>
         <code class="language-console">
 Traceback (most recent call last):
@@ -83,15 +77,13 @@ Traceback (most recent call last):
 ImportError: cannot import name 'MSG' from 'secret'
         </code>
     </pre>
-
     <p>We don't need to run the script because it's enough to understand how the message was encrypted and then 
-       everse engineer it. The script processes each character of the message and applies some arithmetic operations to it.
-       Since you can't directly add a character to a number, we can assume that each character was first converted into 
-       its ASCII equivalent, which was then copied into a new list. After that, the list was converted into bytes and then 
+       everse engineer it. The script iterates through each character of the message and applies some arithmetic operations to it.
+       Since you can't directly add a char to an int, we can assume that each character was first converted into 
+       its ASCII equivalent. Next, the list was converted into bytes and then 
        to hex format. With this understanding of how the message was encrypted, we can now write another Python script 
        to decrypt it.</p>
-
-       <pre>
+    <pre>
         <code class="language-python">
 f = open("msg.enc", "r")
 msg = f.read()
@@ -106,13 +98,11 @@ for char in byte_msg:
 print(decrypted_msg)
         </code>
     </pre>
-
     <p>First, we convert the message from hex back to binary format. Then, we iterate through each byte, converting it
        to an integer value. For each integer, we iterate through possible ASCII values, applying the encryption's 
        arithmetic operations to determine if we can reverse them to find the original ASCII value. Once we identify the
        correct value, we append the corresponding character to a string. Finally, we print the resulting string. The output
        will be as follows:</p>
-
     <pre>
         <code class="language-python">
 Th3 nucl34r w1ll 4rr1v3 0n fr1d4y.
@@ -127,20 +117,31 @@ HTB{l00k_47_y0u_r3v3rs1ng_3qu4710n5_c0ngr475}
     <hr />
 
 
-    <h2 id="behind-the-scenes">2. Behind the Scenes</h2>
+    <h2 id="behind-the-scenes"><a href="#table" class="no-decoration">2. Behind the Scenes</a></h2>
     <h3>Description</h3>
     <p>After struggling to secure our secret strings for a long time, we finally figured out the solution to our problem: 
        Make decompilation harder. It should now be impossible to figure out how our programs work!</p>
 
     <h3>Task files:</h3>
-    <p>rev_behindthescenes</p>
+    <p>behindthescenes</p>
 
     <h3>Solution</h3>
+    <p>We are given a file without any information about what it is. We start by typing this command:</p>
+    <img src="../images/behind-the-scenes1.png" alt="behindthescenes" class="images">
+    <p>This indicates that the file is a binary file. Next, we run the following command to look for anything useful:</p>
+    <img src="../images/behind-the-scenes2.png" alt="behindthescenes" class="images">
+    <p>The output <span class="code-highlight">./challenge &lt;password&gt;</span> and <span class="code-highlight">&gt; HTB{%s}</span> 
+       gives us a small clue. We run the file with <span class="code-highlight">./behindthescenes password</span> and maybe it returns the flag.
+       Next, we will use Ghidra to take a closer look at the file. While examining the file, we find this:</p>
+    <img src="../images/behind-the-scenes3.png" alt="behindthescenes" class="images">
+    <p>It appears that the password is written vertically, so we will try that and see what we get:</p>
+    <img src="../images/behind-the-scenes4.png" alt="behindthescenes" class="images">
+    
+    <h3>Flag</h3>
+    <p class="flag-decoration">HTB{Itz_0nLy_UD2}</p>
 
 
-
-
-
+    <hr />
 
 
 
