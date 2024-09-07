@@ -81,7 +81,7 @@
 }
 
 .table-details td {
-    font-size: 14px;
+    font-size: 16px;
 }
 
 .table-details tr:nth-child(even) {
@@ -123,7 +123,8 @@ hr {
 }
 
 .images {
-    width: 100%;
+    max-width: 50%;
+    height: auto;
     margin-top: 10px;
     margin-bottom: 10px;
 }
